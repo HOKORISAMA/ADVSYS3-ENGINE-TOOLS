@@ -119,19 +119,17 @@ def get_count(bit_stream):
     return bit_stream.get_bits(n) + (1 << n) - 2
 
 def save_image(image_data, width, height, bpp, output_file):
-    if bpp == 8:
-        image = Image.fromarray(image_data.reshape((height, width)), 'L')
-    elif bpp == 24:
-        image_data = image_data[:, :, ::-1]  # Convert BGR to RGB
-        image = Image.fromarray(image_data, 'RGB')
-    elif bpp == 32:
+    if image_data.shape[2] == 4:
         image_data = image_data[:, :, [2, 1, 0, 3]]  # Convert BGRA to RGBA
         image = Image.fromarray(image_data, 'RGBA')
     else:
-        raise ValueError(f"Unsupported bpp value: {bpp}")
+        if bpp == 24:
+            image_data = image_data[:, :, ::-1]  # Convert BGR to RGB
+            image = Image.fromarray(image_data, 'RGB')
+        else:
+            image = Image.fromarray(image_data.reshape((height, width)), 'L')
 
     image.save(output_file)
-
 
 def process_directory(input_dir, output_dir):
     if not os.path.exists(output_dir):
