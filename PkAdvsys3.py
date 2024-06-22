@@ -31,7 +31,7 @@ def pack_directory(input_dir, output_file, order_file):
     with open(order_file, 'r') as json_file:
         order_data = json.load(json_file)
 
-    counter = 0 # This t=is to pack arc.dat
+    counter = 0 # This is to pack arc.dat
    # counter = 100000 remove the # to pack arca.dat
     special_file_found = False
     
