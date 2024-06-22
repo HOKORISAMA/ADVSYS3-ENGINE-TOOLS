@@ -30,8 +30,9 @@ def pack_directory(input_dir, output_file, order_file):
     
     with open(order_file, 'r') as json_file:
         order_data = json.load(json_file)
-    
-    counter = 0
+
+    counter = 0 # This t=is to pack arc.dat
+   # counter = 100000 remove the # to pack arca.dat
     special_file_found = False
     
     for i, entry in enumerate(order_data):
@@ -45,7 +46,7 @@ def pack_directory(input_dir, output_file, order_file):
         file_name_no_ext = os.path.splitext(file_name)[0]
         
         if file_name == "system_setup_ss":
-            counter = 10000
+            counter = 1000
             special_file_found = True
         
         packer.add_entry(file_name_no_ext, data, counter)
@@ -53,8 +54,8 @@ def pack_directory(input_dir, output_file, order_file):
         if special_file_found:
             counter += 1
         else:
-            counter = i + 1
-    
+            counter += 1  # Increment counter by 1 for each file
+
     packer.write_archive()
 
 def main():
