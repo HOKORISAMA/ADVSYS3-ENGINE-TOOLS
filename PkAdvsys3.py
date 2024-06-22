@@ -32,7 +32,7 @@ def pack_directory(input_dir, output_file, order_file):
     with open(order_file, 'r') as json_file:
         order_data = json.load(json_file)
     
-    counter = 0
+    counter = 0        # Change this to 100000 for arca.dat
     special_file_found = False
     
     for i, entry in enumerate(order_data):
