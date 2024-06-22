@@ -46,7 +46,6 @@ def try_open_arc(file_name):
             entry.Name = name
             entry.Offset = current_offset
             entry.Size = size
-            entry.Prefix = file_data[current_offset - 10 : current_offset]
             
             signature = struct.unpack_from("<I", file_data, current_offset)[0]
             if file_data[current_offset + 4 : current_offset + 7] == b'\x47\x57\x44':
