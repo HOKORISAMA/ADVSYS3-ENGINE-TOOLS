@@ -1,6 +1,7 @@
 import sys
 import os
 import struct
+import json
 
 class Entry:
     def __init__(self):
@@ -8,6 +9,7 @@ class Entry:
         self.Offset = 0
         self.Size = 0
         self.Type = ""
+        self.Prefix = ""
 
 class ArcFile:
     def __init__(self, file_path, dir_entries):
@@ -44,6 +46,7 @@ def try_open_arc(file_name):
             entry.Name = name
             entry.Offset = current_offset
             entry.Size = size
+            entry.Prefix = file_data[current_offset - 10 : current_offset]
             
             signature = struct.unpack_from("<I", file_data, current_offset)[0]
             if file_data[current_offset + 4 : current_offset + 7] == b'\x47\x57\x44':
@@ -53,7 +56,7 @@ def try_open_arc(file_name):
                 entry.Type = "audio"
                 entry.Name = os.path.splitext(entry.Name)[0] + ".wav"
             elif file_data[current_offset + 1 : current_offset + 5] == b'\x73\x01\x01\x52':
-                entry.Type = "script"
+                entry.Type = "image"
                 entry.Name = os.path.splitext(entry.Name)[0] + ""
             else:
                 entry.Type = "unknown"
@@ -70,6 +73,8 @@ def extract_arc(arc_file, output_dir):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
+    extracted_files = []
+
     for entry in arc_file.DirEntries:
         file_path = os.path.join(output_dir, entry.Name)
         
@@ -81,6 +86,20 @@ def extract_arc(arc_file, output_dir):
             f.write(data)
         
         print(f"Extracted: {entry.Name}")
+        
+        # Append the file details to the list
+        extracted_files.append({
+            "name": entry.Name,
+            "size": entry.Size,
+            "prefix": entry.Prefix.hex()  # Convert bytes to hexadecimal string
+        })
+    
+    # Save the extracted file details to a JSON file
+    json_output_path = os.path.join(output_dir, "arc.json")
+    with open(json_output_path, "w") as json_file:
+        json.dump(extracted_files, json_file, indent=4)
+    
+    print(f"Extraction details saved to: {json_output_path}")
 
 def main():
     if len(sys.argv) != 3:
