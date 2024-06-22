@@ -1,4 +1,3 @@
-# You can use this to pack advsys3 archives like arc.dat arca.dat but you'll need to change counter for arca.dat from 100000, alternatively you can check the file in a hex viewer for the counter.
 import os
 import struct
 import argparse
@@ -11,8 +10,8 @@ class ArcPacker:
 
     def add_entry(self, name, data, counter):
         size = len(data)
-        entry = struct.pack('<I', size)  # pack size as uint32 little endian | These are the first 4 bytes of 10 bytes before each file name in the archive which denotes the size of file.
-        entry += struct.pack('<I', counter)  # pack the counter as uint32 little endian | These 4 bytes works as index starting from 0 with increment of + 1 with each file.
+        entry = struct.pack('<I', size)  # pack size as uint32 little endian
+        entry += struct.pack('<I', counter)  # pack the counter as uint32 little endian
         entry += struct.pack('<H', len(name))  # pack name length as uint16 little endian
         entry += name.encode('utf-8')  # encode name as utf-8
         entry += data
@@ -32,7 +31,7 @@ def pack_directory(input_dir, output_file, order_file):
     with open(order_file, 'r') as json_file:
         order_data = json.load(json_file)
     
-    counter = 0        # Change this to 100000 for arca.dat
+    counter = 0
     special_file_found = False
     
     for i, entry in enumerate(order_data):
@@ -42,11 +41,14 @@ def pack_directory(input_dir, output_file, order_file):
         with open(file_path, 'rb') as f:
             data = f.read()
         
+        # Remove the file extension
+        file_name_no_ext = os.path.splitext(file_name)[0]
+        
         if file_name == "system_setup_ss":
-            counter = 10000  # From this file counter changes to 10000.
+            counter = 10000
             special_file_found = True
         
-        packer.add_entry(file_name, data, counter)
+        packer.add_entry(file_name_no_ext, data, counter)
         
         if special_file_found:
             counter += 1
