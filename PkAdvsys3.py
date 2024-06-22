@@ -1,4 +1,4 @@
-# You can use this to pack advsys3 archives like arc.dat arca.dat but you'll need to change counter for arca.dat from 10000, alternatively you can check the file in a hex viewer for the counter 
+# You can use this to pack advsys3 archives like arc.dat arca.dat but you'll need to change counter for arca.dat from 100000, alternatively you can check the file in a hex viewer for the counter.
 import os
 import struct
 import argparse
